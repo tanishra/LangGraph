@@ -55,3 +55,13 @@ initial_state = {"weight" : 65,"height" : 1.52}
 final_state = workflow.invoke(initial_state)
 
 print(final_state)
+
+# Save the workflow
+png_bytes = workflow.get_graph().draw_mermaid_png()
+
+# Define output path
+output_file = "workflow.png"
+
+# Write the PNG to disk
+with open(output_file, "wb") as f:
+    f.write(png_bytes)
