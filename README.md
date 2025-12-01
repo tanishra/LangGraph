@@ -11,6 +11,31 @@ If LangChain is the toolbox, **LangGraph is the architecture**.
 
 ---
 
+## 📑 Table of Contents
+
+- [LangGraph](#langgraph)
+- [❓ Why Do We Need LangGraph If LangChain Already Exists?](#-why-do-we-need-langgraph-if-langchain-already-exists)
+- [🔄 LangChain vs LangGraph — Key Differences](#-langchain-vs-langgraph--key-differences)
+- [🧠 Core Concepts of LangGraph](#-core-concepts-of-langgraph)
+  - [1️⃣ Prompt Chaining Workflows](#1️⃣-prompt-chaining-workflows)
+  - [2️⃣ Routing Workflows](#2️⃣-routing-workflows)
+  - [3️⃣ Parallel Workflows](#3️⃣-parallel-workflows)
+  - [4️⃣ Orchestrator Workflows](#4️⃣-orchestrator-workflows)
+  - [5️⃣ Evaluator–Optimizer Workflows (Self-Improving Loops)](#5️⃣-evaluator–optimizer-workflows-self-improving-loops)
+- [🧩 Core Building Blocks of LangGraph](#-core-building-blocks-of-langgraph)
+  - [🔷 1. Graph](#-1-graph)
+  - [🔷 2. Nodes](#-2-nodes)
+  - [🔷 3. Edges](#-3-edges)
+- [🧠 State in LangGraph — The Heart of Everything](#-state-in-langgraph--the-heart-of-everything)
+  - [📌 Why is State Important?](#-why-is-state-important)
+- [🔀 Reducers in LangGraph](#-reducers-in-langgraph)
+  - [🔍 Why Reducers Are Needed](#-why-reducers-are-needed)
+- [⚙️ LangGraph Execution Model](#️-langgraph-execution-model)
+- [🤝 Contributing](#-contributing)
+
+
+---
+
 # ❓ Why Do We Need LangGraph If LangChain Already Exists?
 
 LangChain is great for building simple chains, but real AI agents require:
