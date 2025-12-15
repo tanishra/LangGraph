@@ -1,4 +1,4 @@
-from typing import List, Optional, Any
+from typing import List, Optional, Iterator
 import requests
 
 from langchain_core.language_models import BaseChatModel
@@ -7,8 +7,10 @@ from langchain_core.messages import (
     HumanMessage,
     AIMessage,
     SystemMessage,
+    AIMessageChunk
 )
-from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.outputs import ChatGeneration, ChatResult, ChatGenerationChunk
+import json
 
 
 class EuriChatModel(BaseChatModel):
@@ -105,3 +107,73 @@ class EuriChatModel(BaseChatModel):
         generation = ChatGeneration(message=ai_message)
 
         return ChatResult(generations=[generation])
+    
+    def _stream(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        **kwargs,
+    ):
+        payload = {
+            "model": self.model,
+            "messages": self._convert_messages_to_euri(messages),
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+            "stream": True,
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}",
+        }
+
+        with requests.post(
+            self.base_url,
+            json=payload,
+            headers=headers,
+            stream=True,
+            timeout=60,
+        ) as response:
+            response.raise_for_status()
+            
+            for line in response.iter_lines(decode_unicode=True):
+                if not line:
+                    continue
+                
+                # Handle SSE format
+                if line.startswith("data:"):
+                    line = line[len("data:"):].strip()
+
+                if line == "[DONE]":
+                    break
+
+                try:
+                    chunk = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+                choices = chunk.get("choices")
+                if not choices:
+                    continue  
+
+                delta = choices[0].get("delta", {})
+                content = delta.get("content")
+
+                if not content:
+                    continue
+
+                yield ChatGenerationChunk(
+                    message=AIMessageChunk(content=content)
+                )
+
+
+# from dotenv import load_dotenv
+
+# load_dotenv()
+# import os
+# api = os.getenv("EURI_API_KEY")
+
+# llm = EuriChatModel(api_key=api,model='gpt-4.1-mini')
+
+# for chunk in llm.stream("what is the recipe of pasta"):
+#     print(chunk.content, end="", flush=True)
