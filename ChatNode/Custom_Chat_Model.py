@@ -105,25 +105,3 @@ class EuriChatModel(BaseChatModel):
         generation = ChatGeneration(message=ai_message)
 
         return ChatResult(generations=[generation])
-
-
-
-from langchain_core.messages import HumanMessage
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-EURI_API = os.getenv('EURI_API_KEY')
-
-chat = EuriChatModel(
-    api_key=EURI_API,
-    model="gpt-4.1-nano",
-    temperature=0.7,
-)
-
-response = chat.invoke([
-    HumanMessage(content="Explain AGI in simple terms.")
-])
-
-print(response.content)
