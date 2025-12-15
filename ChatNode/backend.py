@@ -1,14 +1,20 @@
 from langgraph.graph import START, END, StateGraph
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph.message import add_messages
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage
+from Custom_Chat_Model import EuriChatModel
 from typing import TypedDict, Annotated
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-llm = ChatOpenAI(model='gpt-4o-mini')
+EURI_API = os.getenv("EURI_API_KEY")
+
+llm = EuriChatModel(
+    model='gpt-4.1-mini',
+    api_key=EURI_API
+    )
 
 # State 
 class ChatState(TypedDict):
@@ -25,7 +31,7 @@ def chat_node(state : ChatState):
 checkpointer = InMemorySaver()
 
 # Graph
-graph = StateGraph()
+graph = StateGraph(ChatState)
 
 # Add Nodes
 graph.add_node('chat_node',chat_node)
