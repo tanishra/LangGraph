@@ -43,7 +43,25 @@ if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_thread_id()
 
 if 'chat_threads' not in st.session_state:
-    st.session_state['chat_threads'] = retrieve_all_threads()
+    st.session_state['chat_threads'] = []
+
+    for thread_id in retrieve_all_threads():
+        messages = chatbot.get_state(
+            config={'configurable': {'thread_id': thread_id}}
+        ).values.get('messages', [])
+
+        # Generate title from first user message
+        title = "New Chat"
+        for msg in messages:
+            if isinstance(msg, HumanMessage):
+                title = generate_chat_title(msg.content)
+                break
+
+        st.session_state['chat_threads'].append({
+            "thread_id": thread_id,
+            "title": title
+        })
+
     # [
     #   {
     #       "thread_id": UUID,
@@ -104,7 +122,12 @@ if user_input:
     with st.chat_message('user'):
         st.text(user_input)
     
-    CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
+    # CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
+    CONFIG = {
+        'configurable': {'thread_id': st.session_state['thread_id']},
+        'metadata' : {'thread_id' : st.session_state['thread_id']},
+        'run_name' : "thread_run"
+        }
 
     with st.chat_message('assistant'):
         ai_message = st.write_stream(
@@ -112,7 +135,7 @@ if user_input:
             for message_chunk, metadata in chatbot.stream(
                 {'messages': [HumanMessage(content=user_input)]},
                 config=CONFIG,
-                stream_mode='messages'
+                stream_mode='messages',
             )
         )
     
