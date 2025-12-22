@@ -21,6 +21,8 @@ import requests
 
 load_dotenv()
 
+api_key = os.getenv("ALPHAVANTAGE_API_KEY")
+
 # -------------------
 # 1. LLM + embeddings
 # -------------------
@@ -132,7 +134,7 @@ def get_stock_price(symbol: str) -> dict:
     """
     url = (
         "https://www.alphavantage.co/query"
-        f"?function=GLOBAL_QUOTE&symbol={symbol}&apikey=C9PE94QUEW9VWGFM"
+        f"?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}"
     )
     r = requests.get(url)
     return r.json()
