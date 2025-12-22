@@ -21,7 +21,12 @@ client = MultiServerMCPClient(
             'transport' : 'stdio',
             'command' : 'python3',
             'args' : '/Users/tanishrajput/Desktop/Data Science/Generative AI/MCP/math/main.py'
-        }
+        },
+
+        # 'expense' : {
+        #     'transport' : 'streamable_http',
+        #     'url' : 'https://splendid-gold-dingo.fastmcp.app/mcp'
+        # }
     }
 )
 
